@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Web 文件浏览器</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <!-- 顶部工具栏 -->
+      <div class="toolbar">
+        <div class="upload-area">
+          <input type="file" id="file-input" />
+          <button id="upload-btn" title="上传文件到当前目录">📤 上传</button>
+          <span id="upload-filename" class="upload-hint"></span>
+        </div>
+        <button id="refresh-btn" title="刷新列表">🔄 刷新</button>
+      </div>
+
+      <!-- 面包屑导航 -->
+      <div id="breadcrumb" class="breadcrumb"></div>
+
+      <!-- 加载状态 -->
+      <div id="loading" class="loading hidden">加载中…</div>
+
+      <!-- 错误信息 -->
+      <div id="error" class="error hidden"></div>
+
+      <!-- 空目录提示 -->
+      <div id="empty-hint" class="empty-hint hidden">此目录为空</div>
+
+      <!-- 文件列表 -->
+      <table id="file-table" class="file-table">
+        <thead>
+          <tr>
+            <th>名称</th>
+            <th class="col-size">大小</th>
+            <th class="col-actions">操作</th>
+          </tr>
+        </thead>
+        <tbody id="file-list"></tbody>
+      </table>
+    </div>
+
+    <!-- 自定义确认弹窗（替代 alert / confirm，沙箱环境下原生弹窗被禁用） -->
+    <div id="modal-overlay" class="modal-overlay hidden">
+      <div class="modal-box">
+        <p id="modal-message"></p>
+        <div class="modal-actions">
+          <button id="modal-cancel" class="modal-btn btn-cancel hidden">取消</button>
+          <button id="modal-confirm" class="modal-btn btn-confirm">确定</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

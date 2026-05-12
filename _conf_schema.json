@@ -1,0 +1,8 @@
+{
+  "shared_path": {
+    "description": "共享文件夹路径",
+    "type": "string",
+    "hint": "支持相对路径（相对于 data/ 目录）和绝对路径，默认为 workspaces",
+    "default": "workspaces"
+  }
+}

@@ -1,0 +1,317 @@
+/* Web 文件浏览器样式 */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  background: #f5f7fa;
+  color: #333;
+  padding: 16px 20px;
+  min-height: 100vh;
+}
+
+#app {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+/* ─── 工具栏 ──────────────── */
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.upload-area {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#file-input {
+  font-size: 13px;
+  max-width: 200px;
+}
+
+button {
+  padding: 6px 14px;
+  border: 1px solid #d0d5dd;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+button:hover {
+  background: #eef0f3;
+  border-color: #b0b7c3;
+}
+
+button:active {
+  background: #dde0e5;
+}
+
+.upload-hint {
+  font-size: 12px;
+  color: #888;
+}
+
+/* ─── 面包屑 ──────────────── */
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  font-size: 14px;
+}
+
+.breadcrumb a {
+  color: #4a6cf7;
+  text-decoration: none;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+
+.breadcrumb a:hover {
+  background: #e8ecff;
+}
+
+.breadcrumb span.sep {
+  color: #aaa;
+  user-select: none;
+}
+
+.breadcrumb .current {
+  font-weight: 600;
+  color: #333;
+}
+
+/* ─── 加载 / 错误 / 空状态 ── */
+
+.loading,
+.error,
+.empty-hint {
+  text-align: center;
+  padding: 40px 20px;
+  font-size: 14px;
+  border-radius: 8px;
+}
+
+.loading {
+  color: #888;
+}
+
+.error {
+  color: #c0392b;
+  background: #fef0ef;
+}
+
+.empty-hint {
+  color: #999;
+}
+
+.hidden {
+  display: none;
+}
+
+/* ─── 文件表格 ────────────── */
+
+.file-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.file-table thead {
+  background: #fafbfc;
+}
+
+.file-table th {
+  text-align: left;
+  padding: 10px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid #edf0f4;
+}
+
+.col-size {
+  width: 100px;
+}
+
+.col-actions {
+  width: 140px;
+  text-align: right;
+  padding-right: 16px;
+}
+
+.file-table td {
+  padding: 10px 16px;
+  font-size: 14px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.file-table tbody tr:hover {
+  background: #f8fafd;
+}
+
+.file-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* 名称列 */
+.name-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.name-cell .icon {
+  font-size: 18px;
+  width: 22px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.name-cell .name-link {
+  color: #333;
+  text-decoration: none;
+  cursor: pointer;
+  word-break: break-all;
+}
+
+.name-cell .name-link:hover {
+  color: #4a6cf7;
+  text-decoration: underline;
+}
+
+/* 操作按钮 */
+.action-btn {
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  margin-left: 6px;
+}
+
+.btn-download {
+  color: #4a6cf7;
+  border-color: #c8d2fc;
+}
+
+.btn-download:hover {
+  background: #eef1ff;
+  border-color: #4a6cf7;
+}
+
+.btn-delete {
+  color: #e74c3c;
+  border-color: #f5c6cb;
+}
+
+.btn-delete:hover {
+  background: #fef0ef;
+  border-color: #e74c3c;
+}
+
+/* 响应式 */
+@media (max-width: 600px) {
+  .col-size {
+    display: none;
+  }
+  .file-table th:nth-child(2),
+  .file-table td:nth-child(2) {
+    display: none;
+  }
+  body {
+    padding: 10px;
+  }
+}
+
+/* ─── 自定义弹窗（替代沙箱禁用的 alert/confirm） ── */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-overlay.hidden {
+  display: none;
+}
+
+.modal-box {
+  background: #fff;
+  border-radius: 10px;
+  padding: 24px 28px;
+  max-width: 420px;
+  width: 90%;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  animation: modal-in 0.2s ease-out;
+}
+
+@keyframes modal-in {
+  from { opacity: 0; transform: scale(0.95) translateY(-10px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+#modal-message {
+  font-size: 14px;
+  color: #333;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  white-space: pre-wrap;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.modal-btn {
+  padding: 7px 20px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  border: 1px solid #d0d5dd;
+  background: #fff;
+}
+
+.modal-btn.btn-confirm {
+  background: #4a6cf7;
+  color: #fff;
+  border-color: #4a6cf7;
+}
+
+.modal-btn.btn-confirm:hover {
+  background: #3551d5;
+}
+
+.modal-btn.btn-cancel {
+  color: #666;
+}
+
+.modal-btn.btn-cancel:hover {
+  background: #f0f0f0;
+}
