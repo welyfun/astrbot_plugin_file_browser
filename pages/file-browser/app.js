@@ -277,19 +277,42 @@ async function downloadFile(filename) {
 
 async function uploadFile(file) {
   showLoading();
+  const endpoint = currentPath ? `upload/${currentPath}` : "upload";
+
   try {
-    const endpoint = currentPath ? `upload/${currentPath}` : "upload";
-    const result = await bridge.upload(endpoint, file);
-    if (result.error) {
-      showError(result.error);
-      return;
+    // 第一步：尝试直接 multipart 上传
+    try {
+      const result = await bridge.upload(endpoint, file);
+      if (result.error) throw new Error(result.error);
+    } catch (directErr) {
+      // 直接上传失败（如 Edge ERR_ACCESS_DENIED），静默回退到 base64
+      console.warn("[FileBrowser] 直传失败，回退 base64:", directErr.message);
+      const base64Result = await uploadFileBase64(file);
+      if (base64Result.error) throw new Error(base64Result.error);
     }
+
     await loadDirectory(currentPath);
     fileInput.value = "";
     uploadHint.textContent = "";
   } catch (err) {
     showError(`上传失败: ${err.message}`);
   }
+}
+
+async function uploadFileBase64(file) {
+  // 使用 FileReader 读取文件为 base64 Data URL
+  const dataUrl = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error("文件读取失败"));
+    reader.readAsDataURL(file);
+  });
+
+  return await bridge.apiPost("upload_base64", {
+    filename: file.name,
+    data: dataUrl,
+    path: currentPath,
+  });
 }
 
 async function deleteEntry(entry) {

@@ -4,6 +4,7 @@ astrbot_plugin_file_browser - Web 文件浏览器插件
 在 Dashboard 中提供文件浏览、上传、下载和删除功能。
 """
 
+import base64
 import os
 from pathlib import Path
 from typing import Optional
@@ -21,7 +22,7 @@ PLUGIN_NAME = "astrbot_plugin_file_browser"
     PLUGIN_NAME,
     "lobster",
     "基于 Dashboard 的 Web 文件浏览器，支持文件浏览、上传、下载和删除",
-    "1.0.0",
+    "1.1.0",
 )
 class FileBrowserPlugin(star.Star):
     def __init__(self, context: Context, config: AstrBotConfig) -> None:
@@ -53,6 +54,12 @@ class FileBrowserPlugin(star.Star):
             self._api_upload_subpath,
             ["POST"],
             "上传文件到指定子目录",
+        )
+        context.register_web_api(
+            f"/{PLUGIN_NAME}/upload_base64",
+            self._api_upload_base64,
+            ["POST"],
+            "以 base64 编码上传文件（回退方案）",
         )
         context.register_web_api(
             f"/{PLUGIN_NAME}/delete",
@@ -271,6 +278,52 @@ class FileBrowserPlugin(star.Star):
         return jsonify(
             {
                 "message": "上传成功",
+                "filename": safe_name,
+                "path": self._get_relative(dest_path),
+            }
+        )
+
+    async def _api_upload_base64(self):
+        """上传文件（base64 编码），作为 multipart 上传的回退方案。"""
+        data = await request.get_json(silent=True)
+        if not data:
+            return jsonify({"error": "请求体为空"}), 400
+
+        filename = (data.get("filename") or "").strip()
+        file_data = data.get("data") or ""
+        rel_path = (data.get("path") or "").strip()
+
+        if not filename or "\x00" in filename:
+            return jsonify({"error": "文件名无效"}), 400
+        safe_name = Path(filename).name
+        if not safe_name or safe_name.startswith("."):
+            return jsonify({"error": "文件名无效"}), 400
+
+        try:
+            target_dir = self._resolve_safe(rel_path)
+        except ValueError as e:
+            return jsonify({"error": str(e)}), 400
+
+        if not target_dir.is_dir():
+            return jsonify({"error": "目标路径不是一个目录"}), 400
+
+        # 去掉 data URL 前缀（如果有）
+        if "," in file_data and file_data.startswith("data:"):
+            file_data = file_data.split(",", 1)[1]
+
+        try:
+            raw_bytes = base64.b64decode(file_data)
+        except Exception:
+            return jsonify({"error": "base64 解码失败"}), 400
+
+        dest_path = target_dir / safe_name
+        async with aiofiles.open(str(dest_path), "wb") as f:
+            await f.write(raw_bytes)
+
+        logger.info(f"文件已上传(base64): {dest_path}")
+        return jsonify(
+            {
+                "message": "上传成功（base64）",
                 "filename": safe_name,
                 "path": self._get_relative(dest_path),
             }

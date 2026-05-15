@@ -1,6 +1,6 @@
 name: astrbot_plugin_file_browser
 description: 基于 Dashboard 的 Web 文件浏览器，支持文件浏览、上传、下载和删除，可配置共享文件夹路径
-version: 1.0.0
+version: 1.1.0
 author: welyfun
 repo: https://github.com/welyfun/astrbot_plugin_file_browser
 display_name: Web 文件浏览器
